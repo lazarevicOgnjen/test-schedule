@@ -63,7 +63,7 @@ with open("table.md", "w", encoding="utf-8") as f:
     for row in filtered_rows:
         f.write(" | ".join(row) + "\n")
 
-    print(f"✅ table.md created with {len(filtered_rows)} matching rows")
+print(f"✅ table.md created with {len(filtered_rows)} matching rows")
 
 finally:
     browser.quit()
