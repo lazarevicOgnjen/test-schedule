@@ -62,7 +62,7 @@ try:
             filtered_rows.append([col.text for col in cols])
 
     # ===== Write Markdown table =====
-    with open("table.md", "w", encoding="utf-8") as f:
+    with open("README.md", "w", encoding="utf-8") as f:
         f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
         f.write("|-----|-----|-----|-----|-----|\n")
         for row in filtered_rows:
