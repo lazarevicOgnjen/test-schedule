@@ -50,10 +50,10 @@ jobs:
           PAGE_URL: ${{ github.event.inputs.page_url }}
         run: python main.py
 
-      # Step 7: Commit changes if table.md updated
+      # Step 7: Commit changes if README.md updated
       - name: Commit changes
         uses: lazarevicOgnjen/git-auto-commit-action@v6
         with:
-          commit_message: "Update table.md"
-          file_pattern: table.md
+          commit_message: "Update README.md"
+          file_pattern: README.md
         id: auto-commit-action
