@@ -55,9 +55,13 @@ try:
                 filtered_rows.append([col.text for col in cols])
 
     # ===== Save to table.md =====
-    with open("table.md", "w", encoding="utf-8") as f:
-        for row in filtered_rows:
-            f.write(" | ".join(row) + "\n")
+with open("table.md", "w", encoding="utf-8") as f:
+    # header
+    f.write("| Датум | Време | Група | Предмет | Просторија |\n")
+    f.write("|-------|-------|-------|---------|------------|\n")
+    # rows
+    for row in filtered_rows:
+        f.write(" | ".join(row) + "\n")
 
     print(f"✅ table.md created with {len(filtered_rows)} matching rows")
 
