@@ -64,7 +64,7 @@ try:
     # ===== Write Markdown table =====
     with open("table.md", "w", encoding="utf-8") as f:
         f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
-        f.write("|-------|-------|-------|---------|------------|\n")
+        f.write("|----------|-------|-------|----------|-----|\n")
         for row in filtered_rows:
             f.write(" | ".join(row) + "\n")
 
