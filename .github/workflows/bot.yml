@@ -47,7 +47,7 @@ jobs:
       # Step 6: Run main.py
       - name: Run main.py
         env:
-          LOGIN_URL: ${{ github.event.inputs.page_url }}
+          PAGE_URL: ${{ github.event.inputs.page_url }}
         run: python main.py
 
       # Step 7: Commit changes if table.md updated
