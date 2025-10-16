@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import sys
 
 # ===== Get page URL from environment variable =====
-PAGE_URL = os.getenv("PAGE_URL")  # can rename to PAGE_URL if you like
+PAGE_URL = os.getenv("PAGE_URL")
 if not PAGE_URL:
     sys.exit("❌ PAGE_URL environment variable missing")
 
@@ -39,31 +39,29 @@ try:
     # ===== Navigate to page =====
     browser.get(PAGE_URL)
 
-    # ===== Wait for table to appear =====
+    # ===== Wait for table =====
     table = WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.XPATH, '/html/body/section/div/div[2]/div[2]/div/table'))
+        EC.presence_of_element_located(
+            (By.XPATH, '/html/body/section/div/div[2]/div[2]/div/table')
+        )
     )
 
-    # ===== Filter rows by 4th column =====
+    # ===== Filter rows =====
     rows = table.find_elements(By.TAG_NAME, "tr")
     filtered_rows = []
-
     for row in rows:
         cols = row.find_elements(By.TAG_NAME, "td")
-        if len(cols) >= 4:
-            if cols[3].text in TARGET_SUBJECTS:
-                filtered_rows.append([col.text for col in cols])
+        if len(cols) >= 4 and cols[3].text in TARGET_SUBJECTS:
+            filtered_rows.append([col.text for col in cols])
 
-    # ===== Save to table.md =====
-with open("table.md", "w", encoding="utf-8") as f:
-    # header
-    f.write("| Датум | Време | Група | Предмет | Просторија |\n")
-    f.write("|-------|-------|-------|---------|------------|\n")
-    # rows
-    for row in filtered_rows:
-        f.write(" | ".join(row) + "\n")
+    # ===== Write Markdown table =====
+    with open("table.md", "w", encoding="utf-8") as f:
+        f.write("| Датум | Време | Група | Предмет | Просторија |\n")
+        f.write("|-------|-------|-------|---------|------------|\n")
+        for row in filtered_rows:
+            f.write(" | ".join(row) + "\n")
 
-print(f"✅ table.md created with {len(filtered_rows)} matching rows")
+    print(f"✅ table.md created with {len(filtered_rows)} matching rows")
 
 finally:
     browser.quit()
