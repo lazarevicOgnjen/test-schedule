@@ -1,0 +1,60 @@
+name: SIP Table Scraper
+
+on:
+  workflow_dispatch:
+    inputs:
+      login_url:
+        description: "Login page URL"
+        required: true
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Python environment
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Step 3: Install system dependencies for Chrome
+      - name: Install Chromium and ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver libnss3
+
+      # Step 4: Verify installations
+      - name: Verify Chromium and Chromedriver
+        run: |
+          echo "Chromium version:"
+          chromium-browser --version
+          which chromium-browser
+
+          echo "Chromedriver version:"
+          chromedriver --version
+          which chromedriver
+
+      # Step 5: Install Python dependencies
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium==4.11.2
+
+      # Step 6: Run scraping script
+      - name: Run main.py
+        env:
+          LOGIN_URL: ${{ github.event.inputs.login_url }}
+        run: python main.py
+
+      # Step 7: Commit changes if table.md updated
+      - name: Commit changes
+        uses: lazarevicOgnjen/git-auto-commit-action@v6
+        with:
+          commit_message: "Update table.md"
+          file_pattern: table.md
+        id: auto-commit-action
