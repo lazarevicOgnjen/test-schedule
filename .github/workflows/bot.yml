@@ -1,14 +1,14 @@
-name: SIP Table Extractor
+name: SIP Table Scraper
 
 on:
   workflow_dispatch:
     inputs:
-      pdf_url:
-        description: "PDF URL to extract data from"
+      page_url:
+        description: "Page URL to scrape"
         required: true
 
 jobs:
-  extract:
+  scrape:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,28 +22,38 @@ jobs:
         with:
           python-version: '3.9'
 
-      # Step 3: Install system dependencies for Camelot
-      - name: Install system dependencies
+      # Step 3: Install system dependencies
+      - name: Install Chromium and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget ghostscript python3-tk
+          sudo apt-get install -y chromium-browser chromium-chromedriver libnss3
 
-      # Step 4: Install Python packages
+      # Step 4: Verify installations
+      - name: Verify Chromium and Chromedriver
+        run: |
+          echo "Chromium version:"
+          chromium-browser --version
+          which chromium-browser
+          echo "Chromedriver version:"
+          chromedriver --version
+          which chromedriver
+
+      # Step 5: Install Python packages
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 5: Run main.py with PDF_URL
+      # Step 6: Run main.py
       - name: Run main.py
         env:
-          PDF_URL: ${{ github.event.inputs.pdf_url }}
+          PAGE_URL: ${{ github.event.inputs.page_url }}
         run: python main.py
 
-      # Step 6: Commit changes if README.md updated
+      # Step 7: Commit changes if README.md updated
       - name: Commit changes
         uses: lazarevicOgnjen/git-auto-commit-action@v6
         with:
-          commit_message: "Update README.md with PDF data"
+          commit_message: "Update README.md"
           file_pattern: README.md
         id: auto-commit-action
