@@ -1,18 +1,12 @@
 import os
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import sys
+import requests
+from bs4 import BeautifulSoup
 
-# ===== Get page URL from environment variable =====
 PAGE_URL = os.getenv("PAGE_URL")
 if not PAGE_URL:
     sys.exit("❌ PAGE_URL environment variable missing")
 
-# ===== List of target subjects in 4th column =====
 TARGET_SUBJECTS = [
     "Логичко пројектовање",
     "Објектно оријентисано пројектовање",
@@ -30,45 +24,22 @@ TARGET_SUBJECTS = [
     "Нумерички алгоритми"
 ]
 
-# ===== Chrome setup =====
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument("--remote-debugging-port=9222")
-chrome_options.binary_location = "/usr/bin/chromium-browser"
+response = requests.get(PAGE_URL)
+soup = BeautifulSoup(response.text, "html.parser")
 
-browser_driver = Service("/usr/bin/chromedriver")
-browser = webdriver.Chrome(service=browser_driver, options=chrome_options)
+table = soup.find("table")
+rows = table.find_all("tr")
 
-try:
-    # ===== Navigate to page =====
-    browser.get(PAGE_URL)
+filtered_rows = []
+for row in rows:
+    cols = row.find_all("td")
+    if len(cols) >= 4 and cols[3].text.strip() in TARGET_SUBJECTS:
+        filtered_rows.append([col.get_text(strip=True) for col in cols])
 
-    # ===== Wait for table =====
-    table = WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located(
-            (By.XPATH, '/html/body/section/div/div[2]/div[2]/div/table')
-        )
-    )
+with open("README.md", "w", encoding="utf-8") as f:
+    f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
+    f.write("|-----|-----|-----|-----|-----|\n")
+    for row in filtered_rows:
+        f.write(" | ".join(row) + "\n")
 
-    # ===== Filter rows =====
-    rows = table.find_elements(By.TAG_NAME, "tr")
-    filtered_rows = []
-    for row in rows:
-        cols = row.find_elements(By.TAG_NAME, "td")
-        if len(cols) >= 4 and cols[3].text in TARGET_SUBJECTS:
-            filtered_rows.append([col.text for col in cols])
-
-    # ===== Write Markdown table =====
-    with open("README.md", "w", encoding="utf-8") as f:
-        f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
-        f.write("|-----|-----|-----|-----|-----|\n")
-        for row in filtered_rows:
-            f.write(" | ".join(row) + "\n")
-
-    print(f"✅ table.md created with {len(filtered_rows)} matching rows")
-
-finally:
-    browser.quit()
+print(f"✅ README.md created with {len(filtered_rows)} matching rows")
