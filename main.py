@@ -36,10 +36,9 @@ for row in rows:
     if len(cols) >= 4 and cols[3].text.strip() in TARGET_SUBJECTS:
         filtered_rows.append([col.get_text(strip=True) for col in cols])
 
-with open("README.md", "w", encoding="utf-8") as f:
+with open("oktobar3.md", "w", encoding="utf-8") as f:
     f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
     f.write("|-----|-----|-----|-----|-----|\n")
     for row in filtered_rows:
         f.write(" | ".join(row) + "\n")
 
-print(f"✅ README.md created with {len(filtered_rows)} matching rows")
