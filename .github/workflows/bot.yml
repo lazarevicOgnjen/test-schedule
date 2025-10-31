@@ -34,4 +34,4 @@ jobs:
         uses: lazarevicOgnjen/git-auto-commit-action@v6
         with:
           commit_message: "Update README.md"
-          file_pattern: README.md
+          file_pattern: oktobar3.md
