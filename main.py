@@ -25,7 +25,7 @@ for row in rows:
         if ("3" in row_values or "4" in row_values) and "РИИ" in row_values:
             filtered_rows.append(row_values)
 
-with open("oktobar3.md", "w", encoding="utf-8") as f:
+with open("README.md", "w", encoding="utf-8") as f:
     f.write("| Ниво | Акред. | Сем. | Модул | Шифра | Предмет | Датум | Време |\n")
     f.write("|------|--------|------|--------|--------|----------|--------|--------|\n")
     for row in filtered_rows:
