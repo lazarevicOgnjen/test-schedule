@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setp-python@v5
         with:
           python-version: "3.9"
 
@@ -30,8 +30,8 @@ jobs:
           PAGE_URL: ${{ github.event.inputs.page_url }}
         run: python main.py
 
-      - name: Commit README.md changes
+      - name: Commit oktobar3.md changes
         uses: lazarevicOgnjen/git-auto-commit-action@v6
         with:
-          commit_message: "Update README.md"
+          commit_message: "Update oktobar3.md"
           file_pattern: oktobar3.md
