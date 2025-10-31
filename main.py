@@ -24,18 +24,19 @@ print(f"📈 Found {len(rows)} rows in table")
 filtered_rows = []
 for i, row in enumerate(rows):
     cols = row.xpath('.//td')
-    if len(cols) >= 1:
-        # Check if any column contains "3" or "4" as values
-        row_values = [col.text_content().strip() for col in cols]
-        if "3" in row_values or "4" in row_values:
-            print(f"✅ MATCH Row {i}: {row_values}")
+    if len(cols) >= 8:  # Need all 8 columns
+        # Check if "Модул" column (index 3) contains "3" or "4"
+        module = cols[3].text_content().strip()
+        if module == "3" or module == "4":
+            row_values = [col.text_content().strip() for col in cols]
+            print(f"✅ MATCH Row {i}: Модул = {module}")
             filtered_rows.append(row_values)
 
 print(f"🎯 Total filtered rows: {len(filtered_rows)}")
 
-with open("oktobar3.md", "w", encoding="utf-8") as f:
-    f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
-    f.write("|-------|-------|-------|----------|-------------|\n")
+with open("README.md", "w", encoding="utf-8") as f:
+    f.write("| Ниво | Акред. | Сем. | Модул | Шифра | Предмет | Датум | Време |\n")
+    f.write("|------|--------|------|--------|--------|----------|--------|--------|\n")
     for row in filtered_rows:
         f.write("| " + " | ".join(row) + " |\n")
 
