@@ -7,14 +7,6 @@ PAGE_URL = os.getenv("PAGE_URL")
 if not PAGE_URL:
     sys.exit("❌ PAGE_URL environment variable missing")
 
-TARGET_SUBJECTS = [
-    "Логичко пројектовање",
-    "Објектно оријентисано пројектовање", 
-    "Објектно оријентисано програмирање",
-    "Структуре података",
-    # ... keep your other subjects
-]
-
 response = requests.get(PAGE_URL)
 tree = html.fromstring(response.content)
 
@@ -32,12 +24,12 @@ print(f"📈 Found {len(rows)} rows in table")
 filtered_rows = []
 for i, row in enumerate(rows):
     cols = row.xpath('.//td')
-    if len(cols) >= 4:
-        subject = cols[3].text_content().strip()
-        print(f"Row {i}: Subject = '{subject}'")
-        if subject in TARGET_SUBJECTS:
-            print(f"✅ MATCH: {subject}")
-            filtered_rows.append([col.text_content().strip() for col in cols])
+    if len(cols) >= 1:
+        # Check if any column contains "3" or "4" as values
+        row_values = [col.text_content().strip() for col in cols]
+        if "3" in row_values or "4" in row_values:
+            print(f"✅ MATCH Row {i}: {row_values}")
+            filtered_rows.append(row_values)
 
 print(f"🎯 Total filtered rows: {len(filtered_rows)}")
 
