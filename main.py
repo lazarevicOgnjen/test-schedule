@@ -1,7 +1,7 @@
 import os
 import sys
 import requests
-from bs4 import BeautifulSoup
+from lxml import html
 
 PAGE_URL = os.getenv("PAGE_URL")
 if not PAGE_URL:
@@ -25,16 +25,25 @@ TARGET_SUBJECTS = [
 ]
 
 response = requests.get(PAGE_URL)
-soup = BeautifulSoup(response.text, "html.parser")
+if response.status_code != 200:
+    sys.exit(f"❌ Failed to fetch page: {response.status_code}")
 
-table = soup.find("table")
-rows = table.find_all("tr")
+tree = html.fromstring(response.content)
+
+# Find the first <table> on the page
+table = tree.xpath('//table')
+if not table:
+    sys.exit("❌ No table found on page")
+
+rows = table[0].xpath('.//tr')
 
 filtered_rows = []
 for row in rows:
-    cols = row.find_all("td")
-    if len(cols) >= 4 and cols[3].text.strip() in TARGET_SUBJECTS:
-        filtered_rows.append([col.get_text(strip=True) for col in cols])
+    cols = row.xpath('.//td')
+    if len(cols) >= 4:
+        subject = cols[3].text_content().strip()
+        if subject in TARGET_SUBJECTS:
+            filtered_rows.append([col.text_content().strip() for col in cols])
 
 with open("README.md", "w", encoding="utf-8") as f:
     f.write("| Датум | Време | Шифра | Предмет | Просторија |\n")
